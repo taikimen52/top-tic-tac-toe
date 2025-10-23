@@ -3,16 +3,18 @@ function GameBoard() {
     const column = row;
     const board = [];
 
-    const initBoard = () => {
+    const getBoard = () => {
         for(let i = 0; i < row * column; i++){
-            board.push("0");
+            board.push(0);
         }
         return board;
     };
 
-    const getBoard = () => board
+    const setToken = (boardPosition, activePlayer) => {
+        board[boardPosition] = activePlayer.value;
+    }
 
-    return {initBoard, getBoard}
+    return {board, getBoard, setToken}
 }
 
 
@@ -48,20 +50,21 @@ function GameController(playerOneName, playerTwoName){
 
     const startNewGame = () => {
         console.log(`Start New game with ${players[0].name}`)
-        board.initBoard()
+        board.getBoard();
     }
-        console.log(board.getBoard())
 
     const switchPlayerTurn = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0];
     };
 
-    // const setValueToBoard = (boardPosition) => {
-    // }
+    const setValueToBoard = (boardPosition) => {
+        board.setToken(boardPosition, activePlayer);
+        switchPlayerTurn();
+    }
 
-
-    return {startNewGame, switchPlayerTurn}
+    return {startNewGame, switchPlayerTurn, setValueToBoard}
 }
 
 const game = GameController("A", "B");
 game.startNewGame();
+game.setValueToBoard(7);
