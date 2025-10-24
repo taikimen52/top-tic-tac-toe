@@ -47,7 +47,7 @@ function Rules () {
 
     const checkConditions= (arr, row) => {
         for(let i = 0; i < row; i++){
-            if(!arr[i] === 0 && arr[i] === arr[i+row] && arr[i+row] === arr[i+row*2])
+            if(!arr[i] === 0 && arr[i] === arr[i+row] && arr[i+row] === arr[i+ro*2])
         }
         // 行：連続した3つ（0,1,2/3,4,5/6,7,8）に0以外の同じ値のトークンがあればトークンの値を持つ方のプレイヤーが勝利
         if(arr[i])
