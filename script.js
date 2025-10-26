@@ -32,9 +32,10 @@ function GameBoard() {
     }
 
     function updateBoard(boardPosition, value) {
-        const target = document.querySelector(`#position${boardPosition}`)
+        const target = document.querySelector(`#position${boardPosition}`);
         target.setAttribute("value", value);
-        console.log(target.attributes)
+
+        // target.removeEventListener("click", {el.getAttribute("data-position-value"), setValueToBoard})
     }
 
     return {getBoard,setToken, resetBoard, renderBoard, updateBoard}
@@ -114,16 +115,18 @@ function GameController(name1, name2){
     function setBtns() {
         const targets = document.querySelectorAll(".cells")
         targets.forEach((el) => {
-            el.addEventListener("click", () => {
-                setValueToBoard(el.getAttribute("data-position-value"));
-            })
-        })
+            let v = el.getAttribute("data-position-value");
+            console.log(v)
+            el.addEventListener("click", {
+                position: v,
+                handleEvent: setValueToBoard
+                }
+            );
+        });
     }
 
     return {startNewGame, switchPlayerTurn, setValueToBoard, setBtns};
 }
-
-
 
 const game = GameController("A", "B");
 game.startNewGame();
