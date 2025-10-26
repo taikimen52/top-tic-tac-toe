@@ -30,3 +30,7 @@ The Odin Project Exercise in Javascript course.
     すでにトークンが置かれたマスは選択できない
 
 GameController()の中で各オブジェクトの状態を更新していくので、
+
+20251027
+addEventListnerで無名関数渡しているので、removeEventListnerでうまく指定できない
+今回はaddEventListnerのオプション,once = trueにして一回きりのボタンにして解決

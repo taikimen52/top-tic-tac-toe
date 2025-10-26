@@ -34,8 +34,7 @@ function GameBoard() {
     function updateBoard(boardPosition, value) {
         const target = document.querySelector(`#position${boardPosition}`);
         target.setAttribute("value", value);
-
-        // target.removeEventListener("click", {el.getAttribute("data-position-value"), setValueToBoard})
+        target.innerText = value;
     }
 
     return {getBoard,setToken, resetBoard, renderBoard, updateBoard}
@@ -116,12 +115,7 @@ function GameController(name1, name2){
         const targets = document.querySelectorAll(".cells")
         targets.forEach((el) => {
             let v = el.getAttribute("data-position-value");
-            console.log(v)
-            el.addEventListener("click", {
-                position: v,
-                handleEvent: setValueToBoard
-                }
-            );
+            el.addEventListener("click",()=>{setValueToBoard(v)}, {once: true});
         });
     }
 
