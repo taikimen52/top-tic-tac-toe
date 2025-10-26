@@ -9,15 +9,35 @@ function GameBoard() {
 
     const getBoard = () => board;
 
-    const setToken = (boardPosition, activePlayer) => {
-        board[boardPosition] = activePlayer.value;
+    const setToken = (boardPosition, value) => {
+        board[boardPosition] = value;       
     }
 
-    const resetBoard = () => board.forEach((el) => 0);
+    const resetBoard = () => {
+        for (let i =0; i < board.length; i++){
+            board[i] = 0;
+        }
+    };
 
-    const getRow = () => row;
+    function renderBoard() {
+        const container = document.querySelector(".board");
+        for(let i = 0; i < board.length; i++){
+            const div = document.createElement("div");
+            div.classList.add("cells")
+            div.setAttribute("data-position-value", i);
+            div.setAttribute("id", `position${i}`)
+            div.innerText = board[i];
+            container.appendChild(div);
+        }
+    }
 
-    return {getBoard, setToken, resetBoard}
+    function updateBoard(boardPosition, value) {
+        const target = document.querySelector(`#position${boardPosition}`)
+        target.setAttribute("value", value);
+        console.log(target.attributes)
+    }
+
+    return {getBoard,setToken, resetBoard, renderBoard, updateBoard}
 }
 
 
@@ -41,36 +61,37 @@ function setPlayer(playerOneName = "player 1", playerTwoName ="player 2"){
 }
 
 function Rules () {
-    const victory = false;
+    const checkConditions= (arr) => {
+        const LINES = [
+            [0,1,2], [3,4,5], [6,7,8],      // 横
+            [0,3,6], [1,4,7], [2,5,8],      // 縦
+            [0,4,8], [2,4,6],               // 斜め
+        ];
 
-    const winTheGame = () => victory = true;
-
-    const checkConditions= (arr, row) => {
-        for(let i = 0; i < row; i++){
-            if(!arr[i] === 0 && arr[i] === arr[i+row] && arr[i+row] === arr[i+ro*2])
+        for(const [a, b, c] of LINES){
+            if (arr[a] !== 0 && arr[a] === arr[b] && arr[a] === arr[c]) return true;
         }
-        // 行：連続した3つ（0,1,2/3,4,5/6,7,8）に0以外の同じ値のトークンがあればトークンの値を持つ方のプレイヤーが勝利
-        if(arr[i])
-        // 列：n+row*iが全て同じトークンなら勝利
-        // 0+row+1 or row-1+row*iが同じトークンなら勝利
-    } 
-    return {checkConditions};
+        return false; 
+    }
+
+    return {checkConditions}
 }
 
-function GameController(playerOneName, playerTwoName){
+function GameController(name1, name2){
     // 盤面とプレイヤーを作成
     const board = GameBoard();
-    console.log(board)
-    const players = setPlayer(playerOneName, playerTwoName);
+    const rules = Rules();
+    const playersObj = setPlayer(name1, name2);
+    const players = playersObj.getPlayers();
 
     //初期専攻プレイヤーを取得
-    let activePlayer = players.getActivePlayer();
-    console.log(activePlayer);
-
+    let activePlayer = players[0];
 
     const startNewGame = () => {
-        console.log(`Start New game with ${activePlayer.name}`)
+        console.log(`Start New game with ${activePlayer.name} Token is ${activePlayer.value}`)
         board.resetBoard();
+        board.renderBoard();
+        setBtns();
     }
 
     const switchPlayerTurn = () => {
@@ -78,14 +99,31 @@ function GameController(playerOneName, playerTwoName){
     };
 
     const setValueToBoard = (boardPosition) => {
-        board.setToken(boardPosition, activePlayer);
-        switchPlayerTurn();
+        let value = activePlayer.value;
+
+        board.setToken(boardPosition, value);
+        board.updateBoard(boardPosition, value);
+        
+        if (rules.checkConditions(board.getBoard())) {
+            console.log(`${activePlayer} win the game`);
+        } else {
+            switchPlayerTurn();
+        }
     }
 
-    return {startNewGame, switchPlayerTurn, setValueToBoard};
+    function setBtns() {
+        const targets = document.querySelectorAll(".cells")
+        targets.forEach((el) => {
+            el.addEventListener("click", () => {
+                setValueToBoard(el.getAttribute("data-position-value"));
+            })
+        })
+    }
+
+    return {startNewGame, switchPlayerTurn, setValueToBoard, setBtns};
 }
+
+
 
 const game = GameController("A", "B");
 game.startNewGame();
-game.setValueToBoard(7);
-console.log(game);
