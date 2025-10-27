@@ -77,18 +77,20 @@ function Rules () {
     return {checkConditions}
 }
 
-function GameController(name1, name2){
+function GameController(){
     // 盤面とプレイヤーを作成
     const board = GameBoard();
     const rules = Rules();
-    const playersObj = setPlayer(name1, name2);
-    const players = playersObj.getPlayers();
-
-    //初期専攻プレイヤーを取得
-    let activePlayer = players[0];
+    let playerOneName;
+    let playerTwoName;
+    let players;
+    let activePlayer;
 
     const startNewGame = () => {
-        console.log(`Start New game with ${activePlayer.name} Token is ${activePlayer.value}`)
+        getPlayersInput();
+        const playersSet = setPlayer(playerOneName, playerTwoName);
+        players = playersSet.getPlayers();
+        activePlayer = playersSet.getActivePlayer();
         board.resetBoard();
         board.renderBoard();
         setBtns();
@@ -105,7 +107,7 @@ function GameController(name1, name2){
         board.updateBoard(boardPosition, value);
         
         if (rules.checkConditions(board.getBoard())) {
-            console.log(`${activePlayer} win the game`);
+            console.log(`${activePlayer.name} win the game`);
         } else {
             switchPlayerTurn();
         }
@@ -119,8 +121,14 @@ function GameController(name1, name2){
         });
     }
 
-    return {startNewGame, switchPlayerTurn, setValueToBoard, setBtns};
+    function getPlayersInput() {
+        playerOneName = document.querySelector("#playerone").value
+        playerTwoName = document.querySelector("#playertwo").value
+
+    }
+    return {startNewGame};
 }
 
-const game = GameController("A", "B");
-game.startNewGame();
+const game = GameController();
+const startBtn = document.querySelector(".startbtn");
+startBtn.addEventListener("click", game.startNewGame)
