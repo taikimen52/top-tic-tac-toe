@@ -41,14 +41,14 @@ function GameBoard() {
 }
 
 
-function setPlayer(playerOneName = "player 1", playerTwoName ="player 2"){
+function setPlayer(){
     const players = [
         {
-            name: playerOneName,
+            name: "default1",
             value: 1
         },
         {
-            name: playerTwoName,
+            name: "default2",
             value: 2
         }
     ];
@@ -57,7 +57,21 @@ function setPlayer(playerOneName = "player 1", playerTwoName ="player 2"){
 
     const getActivePlayer = () => players[0];
 
-    return {getPlayers, getActivePlayer}
+    const setName = (name1 = "player1", name2 = "player2") => {
+        if(name1 == "" && name2 == ""){
+            players[0].name = "player1";
+            players[1].name = "player2";
+        }else if (name1 == "") {
+            players[0].name = "player1";
+        }else if (name2 == "") {
+            players[1].name = "player2";
+        }else {
+            players[0].name = name1;
+            players[1].name = name2;
+        }
+    }
+
+    return {getPlayers, getActivePlayer, setName}
 }
 
 function Rules () {
@@ -80,18 +94,16 @@ function Rules () {
 function GameController(){
     // 盤面とプレイヤーを作成
     const board = GameBoard();
+    const boardArr = board.getBoard();
     const rules = Rules();
-    let playerOneName;
-    let playerTwoName;
-    let players;
-    let activePlayer;
+    const playersObj = setPlayer();
+    const players = playersObj.getPlayers();
+    let activePlayer = playersObj.getActivePlayer();
 
     const startNewGame = () => {
         getPlayersInput();
-        const playersSet = setPlayer(playerOneName, playerTwoName);
-        players = playersSet.getPlayers();
-        activePlayer = playersSet.getActivePlayer();
         board.resetBoard();
+        printPlayers();
         board.renderBoard();
         setBtns();
     }
@@ -102,15 +114,10 @@ function GameController(){
 
     const setValueToBoard = (boardPosition) => {
         let value = activePlayer.value;
-
         board.setToken(boardPosition, value);
         board.updateBoard(boardPosition, value);
-        
-        if (rules.checkConditions(board.getBoard())) {
-            console.log(`${activePlayer.name} win the game`);
-        } else {
-            switchPlayerTurn();
-        }
+        printResult();
+        switchPlayerTurn();
     }
 
     function setBtns() {
@@ -122,13 +129,29 @@ function GameController(){
     }
 
     function getPlayersInput() {
-        playerOneName = document.querySelector("#playerone").value
-        playerTwoName = document.querySelector("#playertwo").value
-
+        const playerOneName = document.querySelector("#playerone").value
+        const playerTwoName = document.querySelector("#playertwo").value
+        playersObj.setName(playerOneName, playerTwoName);
     }
+
+    function printPlayers() {
+        const target = document.querySelector(".message")
+        target.innerText = `Now the turn of ${activePlayer.name}`
+    }
+
+    function printResult() {
+        target = document.querySelector(".resultmessage")  
+        if (rules.checkConditions(board.getBoard())) {
+            target.innerText = `${activePlayer.name} win the game`
+        } else if(!boardArr.includes(0)){
+            target.innerText = "Draw"
+        }
+    }
+
     return {startNewGame};
 }
 
 const game = GameController();
 const startBtn = document.querySelector(".startbtn");
-startBtn.addEventListener("click", game.startNewGame)
+
+startBtn.addEventListener("click", game.startNewGame);

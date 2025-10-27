@@ -34,3 +34,8 @@ GameController()の中で各オブジェクトの状態を更新していくの�
 20251027
 addEventListnerで無名関数渡しているので、removeEventListnerでうまく指定できない
 今回はaddEventListnerのオプション,once = trueにして一回きりのボタンにして解決
+基本的なゲームの流れとDOM表示まで完成。引き分けルール実装したら一旦完成とする。
+
+Assignments:
+・ゲーム終了後のリスタート
+・ゲームスタート時のフォーム削除
